@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Random Walk Robot - Web Control</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖⚛️ Quantum Random Walk Robot</h1>
+            <div class="status" id="connection-status">
+                <span class="indicator offline" id="status-indicator"></span>
+                <span id="status-text">Disconnected</span>
+            </div>
+        </header>
+
+        <main>
+            <!-- Control Panel -->
+            <section class="control-panel">
+                <h2>Robot Control</h2>
+                
+                <div class="controls-grid">
+                    <!-- Manual Controls -->
+                    <div class="control-group">
+                        <h3>Manual Control</h3>
+                        <div class="direction-controls">
+                            <button class="control-btn" onclick="sendCommand('FORWARD')">↑</button>
+                            <div class="middle-row">
+                                <button class="control-btn" onclick="sendCommand('LEFT')">←</button>
+                                <button class="control-btn stop" onclick="sendCommand('STOP')">⏹</button>
+                                <button class="control-btn" onclick="sendCommand('RIGHT')">→</button>
+                            </div>
+                            <button class="control-btn" onclick="sendCommand('BACKWARD')">↓</button>
+                        </div>
+                    </div>
+
+                    <!-- Quantum Controls -->
+                    <div class="control-group">
+                        <h3>Quantum Walk</h3>
+                        <button class="control-btn quantum" onclick="sendCommand('START_QUANTUM_WALK')">
+                            🚀 Start Quantum Walk
+                        </button>
+                        <button class="control-btn" onclick="sendCommand('STOP_QUANTUM_WALK')">
+                            ⏹ Stop Quantum Walk
+                        </button>
+                        <button class="control-btn emergency" onclick="sendCommand('EMERGENCY_STOP')">
+                            🛑 Emergency Stop
+                        </button>
+                    </div>
+
+                    <!-- Parameters -->
+                    <div class="control-group">
+                        <h3>Quantum Parameters</h3>
+                        <div class="parameter">
+                            <label for="speed">Speed:</label>
+                            <input type="range" id="speed" min="1" max="10" value="5">
+                            <span id="speed-value">5</span>
+                        </div>
+                        <div class="parameter">
+                            <label for="coherence">Coherence Time:</label>
+                            <input type="range" id="coherence" min="0.1" max="5.0" step="0.1" value="1.0">
+                            <span id="coherence-value">1.0s</span>
+                        </div>
+                        <button class="control-btn" onclick="updateParameters()">Update Parameters</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Telemetry Dashboard -->
+            <section class="telemetry-panel">
+                <h2>Live Telemetry</h2>
+                
+                <div class="telemetry-grid">
+                    <!-- Status Cards -->
+                    <div class="telemetry-card">
+                        <h3>Battery</h3>
+                        <div class="telemetry-value" id="battery">--</div>
+                        <div class="telemetry-unit">Volts</div>
+                    </div>
+
+                    <div class="telemetry-card">
+                        <h3>Signal</h3>
+                        <div class="telemetry-value" id="rssi">--</div>
+                        <div class="telemetry-unit">dBm</div>
+                    </div>
+
+                    <div class="telemetry-card">
+                        <h3>Temperature</h3>
+                        <div class="telemetry-value" id="temperature">--</div>
+                        <div class="telemetry-unit">°C</div>
+                    </div>
+
+                    <div class="telemetry-card">
+                        <h3>Quantum Entropy</h3>
+                        <div class="telemetry-value" id="entropy">--</div>
+                        <div class="telemetry-unit">bits</div>
+                    </div>
+                </div>
+
+                <!-- Real-time Charts -->
+                <div class="charts-container">
+                    <div class="chart-panel">
+                        <canvas id="batteryChart"></canvas>
+                    </div>
+                    <div class="chart-panel">
+                        <canvas id="entropyChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quantum Visualization -->
+            <section class="quantum-panel">
+                <h2>Quantum State Visualization</h2>
+                
+                <div class="quantum-display">
+                    <div class="wavefunction-display">
+                        <h3>Current Quantum State</h3>
+                        <div class="amplitude-bars">
+                            <div class="amplitude-bar">
+                                <label>Left Amplitude</label>
+                                <div class="bar-container">
+                                    <div class="bar left" id="left-amplitude" style="width: 50%"></div>
+                                </div>
+                                <span id="left-value">0.707</span>
+                            </div>
+                            <div class="amplitude-bar">
+                                <label>Right Amplitude</label>
+                                <div class="bar-container">
+                                    <div class="bar right" id="right-amplitude" style="width: 50%"></div>
+                                </div>
+                                <span id="right-value">0.707</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="decision-history">
+                        <h3>Recent Decisions</h3>
+                        <div id="decisions-list"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Log Panel -->
+            <section class="log-panel">
+                <h2>System Log</h2>
+                <div id="log-container"></div>
+                <button onclick="clearLog()">Clear Log</button>
+            </section>
+        </main>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
